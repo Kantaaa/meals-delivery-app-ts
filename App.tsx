@@ -2,10 +2,14 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { LandingScreen } from "./src/screens/LandingScreen";
 
+import { Provider } from "react-redux";
+import { store } from "./src/redux";
+
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { HomeScreen } from "./src/screens/HomeScreen";
+import React from "react";
 
 const switchNavigator = createSwitchNavigator({
   landingStacks: {
@@ -24,9 +28,16 @@ const switchNavigator = createSwitchNavigator({
 
   homeStack: createBottomTabNavigator({
     Home: {
-      screen: createStackNavigator({
-        HomePage: HomeScreen,
-      }),
+      screen: createStackNavigator(
+        {
+          HomePage: HomeScreen,
+        },
+        {
+          defaultNavigationOptions: {
+            headerShown: false,
+          },
+        }
+      ),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {
           let icon =
@@ -86,9 +97,9 @@ const AppNavigation = createAppContainer(switchNavigator);
 
 export default function App() {
   return (
-    <>
+    <Provider store={store}>
       <AppNavigation />
-    </>
+    </Provider>
   );
 }
 

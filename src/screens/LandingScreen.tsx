@@ -4,9 +4,19 @@ import * as Location from "expo-location";
 
 import { useNavigation } from "../utils";
 
+import { connect } from "react-redux";
+import { onUpdateLocation, UserState, ApplicationState } from "../redux";
+
 const screenWidth = Dimensions.get("screen").width;
 
-export const LandingScreen = () => {
+interface LandingProps {
+  userReducer: UserState;
+  onUpdateLocation: Function;
+}
+
+export const _LandingScreen: React.FC<LandingProps> = (props) => {
+  const { userReducer, onUpdateLocation } = props;
+
   const { navigate } = useNavigation();
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -35,13 +45,14 @@ export const LandingScreen = () => {
 
         for (let item of addressResponse) {
           setAddress(item);
+          onUpdateLocation(item);
           let currentAdddress = `${item.name}, ${item.street}, ${item.postalCode}, ${item.country}`;
           setDisplayAddress(currentAdddress);
 
           if (currentAdddress.length > 0) {
             setTimeout(() => {
               navigate("homeStack");
-            }, 2500);
+            }, 1000);
           }
 
           return;
@@ -107,3 +118,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+const mapToStateProps = (state: ApplicationState) => ({
+  userReducer: state.useReducer,
+});
+
+const LandingScreen = connect(mapToStateProps, {
+  onUpdateLocation,
+})(_LandingScreen);
+
+export { LandingScreen };
